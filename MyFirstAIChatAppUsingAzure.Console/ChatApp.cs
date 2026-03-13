@@ -1,14 +1,16 @@
-﻿using Microsoft.Extensions.Hosting;
+﻿using Microsoft.Extensions.AI;
+using Microsoft.Extensions.Hosting;
 
 namespace MyFirstAIChatAppUsingAzure_Console
 {
-	public class ChatApp(IHostApplicationLifetime applicationLifetime) : BackgroundService
+	public class ChatApp(IHostApplicationLifetime applicationLifetime, IChatClient ai) : BackgroundService
 	{
-		protected override Task ExecuteAsync(CancellationToken stoppingToken)
+		protected override async Task ExecuteAsync(CancellationToken stoppingToken)
 		{
-			Console.WriteLine("You are an AI assistant that tries to answer the user's query.");
+			ChatMessage systemMessage = new(ChatRole.System, "You are an AI assistant that tries to answer the user's query.");
+			ChatResponse response = await ai.GetResponseAsync(systemMessage);
+			Console.WriteLine("AI: " + response.Text);
 			applicationLifetime.StopApplication();
-			return Task.CompletedTask;
 		}
 	}
 }

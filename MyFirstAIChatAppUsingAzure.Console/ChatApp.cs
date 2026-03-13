@@ -20,6 +20,21 @@ namespace MyFirstAIChatAppUsingAzure_Console
 			ChatMessage systemMessage = new(ChatRole.System, "You are an AI assistant that tries to answer the user's query.");
 			ChatResponse response = await ai.GetResponseAsync(systemMessage);
 			Console.WriteLine("AI: " + response.Text);
+			
+			while (stoppingToken.IsCancellationRequested == false)
+			{
+				Console.Write("Prompt > ");
+				string? userMessage = Console.ReadLine();
+				if (userMessage == null || exitRequested)
+					break;
+
+				var userRequest = new ChatMessage(ChatRole.User, userMessage);
+				ChatResponse chatResponse = await ai.GetResponseAsync(userRequest);
+				foreach (var msg in chatResponse.Messages)
+				{
+					Console.WriteLine($"{msg.Role}: {msg.Text}");
+				}
+			}
 		}
 	}
 }

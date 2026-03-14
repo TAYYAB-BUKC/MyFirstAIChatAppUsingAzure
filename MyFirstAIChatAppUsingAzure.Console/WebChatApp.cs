@@ -3,7 +3,7 @@ using Microsoft.Extensions.Hosting;
 
 namespace MyFirstAIChatAppUsingAzure.Console
 {
-	public class WebChatApp(IHostApplicationLifetime applicationLifetime, IChatClient ai) : BackgroundService
+	public partial class WebChatApp(IHostApplicationLifetime applicationLifetime, IChatClient ai) : BackgroundService
 	{
 		private static bool exitRequested = false;
 		List<ChatMessage> history = [];

@@ -4,6 +4,7 @@ using Microsoft.Extensions.AI;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using MyFirstAIChatAppUsingAzure.Console;
 using MyFirstAIChatAppUsingAzure_Console;
 
 var host = Host.CreateApplicationBuilder(args);
@@ -22,7 +23,9 @@ string model = "gpt-4o-mini";
 IChatClient innerClient = client.GetChatClient(model).AsIChatClient();
 
 host.Services.AddChatClient(innerClient);
-host.Services.AddHostedService<ChatApp>();
+host.Services.AddHttpClient();
+//host.Services.AddHostedService<ChatApp>();
+host.Services.AddHostedService<WebChatApp>();
 
 var app = host.Build();
 await app.RunAsync();

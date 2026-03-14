@@ -6,7 +6,7 @@ namespace MyFirstAIChatAppUsingAzure_Console
 	public class ChatApp(IHostApplicationLifetime applicationLifetime, IChatClient ai) : BackgroundService
 	{
 		private static bool exitRequested = false;
-
+		List<ChatMessage> history = [];
 		protected override async Task ExecuteAsync(CancellationToken stoppingToken)
 		{
 			Console.CancelKeyPress += (sender, e) =>
@@ -18,7 +18,8 @@ namespace MyFirstAIChatAppUsingAzure_Console
 			};
 
 			ChatMessage systemMessage = new(ChatRole.System, "You are an AI assistant that tries to answer the user's query.");
-			ChatResponse response = await ai.GetResponseAsync(systemMessage);
+			history.Add(systemMessage);
+			ChatResponse response = await ai.GetResponseAsync(history);
 			Console.WriteLine("AI: " + response.Text);
 			
 			while (stoppingToken.IsCancellationRequested == false)
@@ -27,9 +28,9 @@ namespace MyFirstAIChatAppUsingAzure_Console
 				string? userMessage = Console.ReadLine();
 				if (userMessage == null || exitRequested)
 					break;
-
-				var userRequest = new ChatMessage(ChatRole.User, userMessage);
-				ChatResponse chatResponse = await ai.GetResponseAsync(userRequest);
+				history.Add(new ChatMessage(ChatRole.User, userMessage));
+				ChatResponse chatResponse = await ai.GetResponseAsync(history);
+				history.AddMessages(chatResponse);
 				foreach (var msg in chatResponse.Messages)
 				{
 					Console.WriteLine($"{msg.Role}: {msg.Text}");

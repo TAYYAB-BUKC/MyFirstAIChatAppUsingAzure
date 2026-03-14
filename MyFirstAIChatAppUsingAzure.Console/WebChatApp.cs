@@ -17,7 +17,7 @@ namespace MyFirstAIChatAppUsingAzure.Console
 				exitRequested = true;
 			};
 
-			ChatMessage systemMessage = new(ChatRole.System, "You are an AI assistant that tries to answer the user's query.");
+			ChatMessage systemMessage = new(ChatRole.System, summarizationPrompt);
 			history.Add(systemMessage);
 			ChatResponse response = await ai.GetResponseAsync(history);
 			System.Console.WriteLine("AI: " + response.Text);

@@ -26,9 +26,23 @@ namespace MyFirstAIChatAppUsingAzure.Console
 			// Parse HTML and extract text from <p> tags
 			var doc = new HtmlDocument();
 			doc.LoadHtml(data);
+			var paragraphNodes = doc.DocumentNode.SelectNodes("//p");
+			string paragraphData = string.Empty;
+
+			if (paragraphNodes != null)
+			{
+				paragraphData = string.Join(" ", paragraphNodes.Select(node => node.InnerText.Trim()));
+			}
+
+			history.Add(new ChatMessage(ChatRole.Assistant, paragraphData));
 
 			ChatResponse response = await ai.GetResponseAsync(history);
+
+			System.Console.WriteLine("--------------------------------");
 			System.Console.WriteLine("AI: " + response.Text);
+			System.Console.WriteLine($"Tokens used: in={response.Usage?.InputTokenCount}, out={response.Usage?.OutputTokenCount}");
+
+			history.AddMessages(response);
 
 			while (stoppingToken.IsCancellationRequested == false)
 			{
